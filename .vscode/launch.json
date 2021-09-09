@@ -1,0 +1,18 @@
+{
+    "version": "0.0.0",
+    "configurations": [
+        {
+            "name": "Test Echo Server",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}/tools/mock-server",
+            "cwd": "${workspaceRoot}",
+            "args": [],
+            "env": {
+                "LISTEN_PORT": 8080
+            },
+            "showLog": true
+        }
+    ]
+}
