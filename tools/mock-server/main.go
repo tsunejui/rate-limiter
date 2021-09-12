@@ -9,14 +9,25 @@ import (
 	"rate-limiter/tools/mock-server/conf"
 	"time"
 
+	rMiddleware "rate-limiter/middleware"
+
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+)
+
+var (
+	timeRate   = time.Minute * 5
+	maxRequest = 5
 )
 
 func main() {
 	e := echo.New()
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	e.Use(
+		rMiddleware.Limiter(&rMiddleware.MiddlewareCofig{
+			Mode:     rMiddleware.GeneralMode,
+			TimeRate: timeRate,
+			Max:      maxRequest,
+		}),
+	)
 	e.GET("/", hello)
 
 	go func() {
