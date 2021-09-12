@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"rate-limiter/tools/mock-server/conf"
+	"rate-limiter/tools/mock-server-general/conf"
 	"time"
 
 	rMiddleware "rate-limiter/middleware"

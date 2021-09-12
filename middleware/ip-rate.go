@@ -27,10 +27,13 @@ type MiddlewareCofig struct {
 }
 
 func Limiter(config *MiddlewareCofig) echo.MiddlewareFunc {
+	limiterOptions := rate.NewLimiterOptions(config.TimeRate, config.Max)
 	var limiter rate.Limiter
 	switch config.Mode {
 	case GeneralMode:
-		limiter = rate.NewTokenBucketRateLimiter(config.TimeRate, config.Max)
+		limiter = rate.NewTokenBucketRateLimiter(limiterOptions)
+	case RedisMode:
+		limiter = rate.NewRedisRateLimiter(limiterOptions).SetRedisOption(config.RedisOptions)
 	default:
 		panic(
 			fmt.Sprintf("invalid mode: %s", config.Mode),
@@ -38,6 +41,12 @@ func Limiter(config *MiddlewareCofig) echo.MiddlewareFunc {
 	}
 	m := &Middleware{
 		limiter: limiter,
+	}
+
+	if err := limiter.Init(); err != nil {
+		panic(
+			fmt.Sprintf("failed to init the middleware: %v", err),
+		)
 	}
 	return m.MiddlewareFunc
 }

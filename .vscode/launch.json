@@ -2,15 +2,30 @@
     "version": "0.0.0",
     "configurations": [
         {
-            "name": "Test Echo Server",
+            "name": "Test Echo Server (General)",
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceRoot}/tools/mock-server",
+            "program": "${workspaceRoot}/tools/mock-server-general",
             "cwd": "${workspaceRoot}",
             "args": [],
             "env": {
                 "LISTEN_PORT": 8080
+            },
+            "showLog": true
+        },
+        {
+            "name": "Test Echo Server (Redis)",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}/tools/mock-server-redis",
+            "cwd": "${workspaceRoot}",
+            "args": [],
+            "env": {
+                "LISTEN_PORT": 8081,
+                "REDIS_ADDRESS": "localhost:6379",
+                "REDIS_PASSWORD": "test"
             },
             "showLog": true
         }

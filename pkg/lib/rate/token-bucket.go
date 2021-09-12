@@ -2,25 +2,27 @@ package rate
 
 import (
 	"sync"
-	"time"
 
 	"golang.org/x/time/rate"
 )
 
 type TokenBucketRateLimiter struct {
-	mu       *sync.RWMutex
-	timeRate time.Duration
-	max      int
-	ips      map[string]*rate.Limiter
+	options *LimiterOptions
+	mu      *sync.RWMutex
+
+	ips map[string]*rate.Limiter
 }
 
-func NewTokenBucketRateLimiter(timeRate time.Duration, m int) *TokenBucketRateLimiter {
+func NewTokenBucketRateLimiter(options *LimiterOptions) *TokenBucketRateLimiter {
 	return &TokenBucketRateLimiter{
-		timeRate: timeRate,
-		max:      m,
-		mu:       &sync.RWMutex{},
-		ips:      make(map[string]*rate.Limiter),
+		mu:      &sync.RWMutex{},
+		options: options,
+		ips:     make(map[string]*rate.Limiter),
 	}
+}
+
+func (l *TokenBucketRateLimiter) Init() error {
+	return nil
 }
 
 func (l *TokenBucketRateLimiter) IsAllow(ip string) (bool, error) {
@@ -38,8 +40,8 @@ func (l *TokenBucketRateLimiter) addIP(address string) *rate.Limiter {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	limit := rate.Every(1 * time.Minute)
-	limiter := rate.NewLimiter(limit, l.max)
+	limit := rate.Every(l.options.timeRate)
+	limiter := rate.NewLimiter(limit, l.options.max)
 	l.ips[address] = limiter
 	return limiter
 }
