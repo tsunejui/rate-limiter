@@ -1,15 +1,13 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net/http"
-	"os"
-	"os/signal"
 	"rate-limiter/tools/mock-server/conf"
 	"time"
 
 	rMiddleware "rate-limiter/middleware"
+	pkgEcho "rate-limiter/pkg/echo"
 
 	"github.com/labstack/echo/v4"
 )
@@ -38,15 +36,7 @@ func main() {
 		)
 	}()
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Fatal(err)
-	}
-
+	pkgEcho.Shutdown(e)
 }
 
 func hello(c echo.Context) error {
